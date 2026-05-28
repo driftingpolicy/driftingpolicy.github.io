@@ -1,16 +1,28 @@
-# Nerfies
+# Drifting Field Policy Project Page
 
-This is the repository that contains source code for the [Nerfies website](https://nerfies.github.io).
+This repository contains the project page for:
 
-If you find Nerfies useful for your work please cite:
+**Drifting Field Policy: A One-Step Generative Policy via Wasserstein Gradient Flow**
+
+Authors: Juil Koo, Mingue Park, Jiwon Choi, Yunhong Min, Minhyuk Sung  
+Institution: KAIST
+
+The page is based on the [Nerfies project page template](https://github.com/nerfies/nerfies.github.io).
+
+## Local Preview
+
+```bash
+python3 -m http.server 8000
 ```
-@article{park2021nerfies
-  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
-  title     = {Nerfies: Deformable Neural Radiance Fields},
-  journal   = {ICCV},
-  year      = {2021},
-}
+
+Then open `http://127.0.0.1:8000/`.
+
+## GitHub Pages
+
+For the organization page URL `https://driftingpolicy.github.io`, push this site to the repository:
+
+```text
+driftingpolicy/driftingpolicy.github.io
 ```
 
-# Website License
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+GitHub Pages should serve the site from the `main` branch.
