@@ -23,6 +23,18 @@
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
   <script src="./static/js/index.js"></script>
 </head>
 <body>
@@ -49,7 +61,7 @@
       </a>
       <a class="navbar-item" href="#abstract">Abstract</a>
       <a class="navbar-item" href="#method">Method</a>
-      <a class="navbar-item" href="#experiments">Experiments</a>
+      <a class="navbar-item" href="#results">Results</a>
       <a class="navbar-item" href="#BibTeX">BibTeX</a>
     </div>
   </div>
@@ -64,11 +76,11 @@
             Drifting Field Policy: A One-Step Generative Policy via Wasserstein Gradient Flow
           </h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Juil Koo,</span>
-            <span class="author-block">Mingue Park,</span>
+            <span class="author-block"><a href="https://63days.github.io/">Juil Koo</a>,</span>
+            <span class="author-block"><a href="https://uygnim99.github.io/">Mingue Park</a>,</span>
             <span class="author-block">Jiwon Choi,</span>
-            <span class="author-block">Yunhong Min,</span>
-            <span class="author-block">Minhyuk Sung</span>
+            <span class="author-block"><a href="https://myh4832.github.io/">Yunhong Min</a>,</span>
+            <span class="author-block"><a href="https://mhsung.github.io/">Minhyuk Sung</a></span>
           </div>
 
           <div class="is-size-5 publication-authors">
@@ -78,7 +90,7 @@
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="#"
+                <a href="./static/pdfs/dfp.pdf"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="fas fa-file-pdf"></i>
@@ -87,7 +99,7 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="#"
+                <a href="https://arxiv.org/abs/2605.07727"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="ai ai-arxiv"></i>
@@ -96,10 +108,11 @@
                 </a>
               </span>
               <span class="link-block">
-                <a class="external-link button is-normal is-rounded is-dark is-disabled"
+                <a class="external-link button is-normal is-rounded is-dark is-disabled has-tooltip"
                    aria-disabled="true"
                    tabindex="-1"
-                   title="Code coming soon">
+                   data-tooltip="Code (coming soon)"
+                   title="Code (coming soon)">
                   <span class="icon">
                     <i class="fab fa-github"></i>
                   </span>
@@ -126,14 +139,14 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <div class="placeholder-media placeholder-media-large">
+      <div class="paper-artifact markdown-slot" data-markdown-section="teaser">
         <div>
           <p class="placeholder-title">Teaser Figure or Video</p>
           <p class="placeholder-subtitle">Replace with <code>static/images/teaser.png</code> or <code>static/videos/teaser.mp4</code></p>
         </div>
       </div>
       <h2 class="subtitle has-text-centered">
-        <span class="dfp">DFP</span> directly updates a one-step generative policy in action space
+        <strong>TL;DR</strong> - <span class="dfp">DFP</span> directly updates a one-step generative policy in action space
         through a drifting-field objective, avoiding ODE trajectory-level credit assignment.
       </h2>
     </div>
@@ -172,50 +185,74 @@
 
         <div class="content has-text-justified">
           <p>
-            DFP interprets policy improvement as transporting an anchor action distribution toward
-            a soft target policy. The learned drifting field gives a direct one-step action update,
-            retaining the expressiveness of generative policies without solving an ODE at action
-            selection time.
+            Drifting Field Policy (DFP) turns policy improvement into a direct action-space
+            drifting update for a one-step generative policy. Instead of learning a denoising chain
+            or an ODE trajectory, DFP learns a pushforward map that transports noise samples into
+            improved actions in a single step.
           </p>
         </div>
 
-        <div class="placeholder-media placeholder-media-large">
-          <div>
-            <p class="placeholder-title">Overview Figure</p>
-            <p class="placeholder-subtitle">Drifting-field policy update and top-K target construction</p>
+        <div class="method-card">
+          <h3 class="title is-4">A. One-Step Generative Policy</h3>
+          <div class="equation-box">
+            $$
+            \pi_\theta(\cdot \mid s) = [f_\theta(\cdot, s)]_\# p_\epsilon,
+            \qquad
+            a = f_\theta(\epsilon, s),
+            \qquad
+            \epsilon \sim \mathcal{N}(0, I).
+            $$
           </div>
-        </div>
-
-        <div class="columns method-grid">
-          <div class="column">
-            <div class="content">
-              <h3 class="title is-4">Policy Improvement via Wasserstein Gradient Flow</h3>
-              <p>
-                The policy update follows a reverse-KL Wasserstein-2 gradient flow toward a soft
-                policy improvement target, yielding a drift that pulls samples toward high-value
-                actions while preserving useful structure from the anchor policy.
-              </p>
-            </div>
-          </div>
-          <div class="column">
-            <div class="content">
-              <h3 class="title is-4">Top-K Critic-Selected Surrogate</h3>
-              <p>
-                DFP replaces the intractable soft target with top-K positive actions selected by
-                the critic. This surrogate keeps the objective practical and stable in
-                offline-to-online reinforcement learning.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Difference from Diffusion, Flow, and MeanFlow Policies</h3>
           <p>
-            Unlike diffusion or flow policies that rely on iterative denoising or ODE integration,
-            DFP learns a one-step drift field in action space. Under the same top-K supervision,
-            the drifting formulation provides a direct policy update that avoids trajectory-level
-            credit assignment while maintaining strong generative policy performance.
+            The policy is represented as the pushforward of a simple noise distribution through a
+            conditional action generator. At inference time, DFP samples once and maps directly to
+            an action, with no denoising chain or ODE solve.
+          </p>
+        </div>
+
+        <div class="method-card">
+          <h3 class="title is-4">B. Wasserstein Gradient Flow Policy Improvement</h3>
+          <div class="equation-box">
+            $$
+            \pi^+(a \mid s)
+            =
+            \frac{\pi_{\mathrm{old}}(a \mid s)\exp(Q_\phi(s,a)/\alpha)}{Z(s)}.
+            $$
+          </div>
+          <p>
+            DFP interprets policy improvement as a Wasserstein-2 gradient flow toward the soft
+            policy improvement target. The ideal drift combines attraction toward high-Q actions
+            with score-based repulsion and regularization around the current or anchor policy.
+          </p>
+        </div>
+
+        <div class="method-card">
+          <h3 class="title is-4">C. Top-K Drifting Surrogate</h3>
+          <div class="equation-box">
+            $$
+            P_K(s) =
+            \mathrm{TopK}_{a^{(j)} \sim \pi_{\mathrm{old}}(\cdot \mid s)}
+            Q_\phi(s,a^{(j)}),
+            \qquad
+            \mathcal{L}_{\mathrm{top}\text{-}K}
+            =
+            \mathcal{L}_{\mathrm{drift}}(\theta; P_K, \pi_\theta).
+            $$
+          </div>
+          <p>
+            Because the exact soft target is intractable, DFP samples candidate actions from the
+            old policy, selects the top-K actions under the critic, and uses those actions as a
+            practical positive set in the drifting loss.
+          </p>
+        </div>
+
+        <div class="method-note">
+          <h3 class="title is-4">Why Non-ODE Matters</h3>
+          <p>
+            Diffusion, flow, and MeanFlow policies learn time-indexed velocities or ODE-related
+            objectives, so reward or top-K supervision must be absorbed through the generation
+            trajectory. DFP instead updates the action distribution directly through a one-step
+            pushforward map.
           </p>
         </div>
       </div>
@@ -223,95 +260,257 @@
   </div>
 </section>
 
-<section class="hero is-light is-small" id="experiments">
+<section class="hero is-light is-small wide-section" id="results">
   <div class="hero-body">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3 has-text-centered">Experiments</h2>
-      <div class="content has-text-justified">
+    <div class="container is-max-widescreen">
+      <h2 class="title is-3 has-text-centered">Results</h2>
+      <div class="content has-text-justified section-intro">
         <p>
-          DFP is evaluated on 12 manipulation tasks across Robomimic and OGBench. It achieves the
-          best average success rate compared to BFN, QC-BFN, FQL, QC-FQL, and MVP.
+          DFP is evaluated on 12 manipulation tasks across Robomimic and OGBench under the
+          offline-to-online RL setting. It achieves the best average success rate among all
+          baselines, ranking first on 9 of 12 tasks and second-best on the remaining 3.
         </p>
       </div>
 
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item">
-          <div class="placeholder-media carousel-placeholder">
-            <div>
-              <p class="placeholder-title">Main Result Table</p>
-              <p class="placeholder-subtitle">Image or HTML table</p>
-            </div>
+      <div class="columns is-centered metric-grid">
+        <div class="column">
+          <div class="metric-card">
+            <p class="metric-value">95.8%</p>
+            <p class="metric-label">Avg. Success</p>
           </div>
         </div>
-        <div class="item">
-          <div class="placeholder-media carousel-placeholder">
-            <div>
-              <p class="placeholder-title">Training Curve Figure</p>
-              <p class="placeholder-subtitle">Aggregate learning curves</p>
-            </div>
+        <div class="column">
+          <div class="metric-card">
+            <p class="metric-value">9/12</p>
+            <p class="metric-label">Best Tasks</p>
           </div>
         </div>
-        <div class="item">
-          <div class="placeholder-media carousel-placeholder">
-            <div>
-              <p class="placeholder-title">Robomimic Rollout Videos</p>
-              <p class="placeholder-subtitle">Qualitative policy rollouts</p>
-            </div>
+        <div class="column">
+          <div class="metric-card">
+            <p class="metric-value">+9.0 pp</p>
+            <p class="metric-label">over QC-FQL</p>
           </div>
         </div>
-        <div class="item">
-          <div class="placeholder-media carousel-placeholder">
-            <div>
-              <p class="placeholder-title">OGBench Rollout Videos</p>
-              <p class="placeholder-subtitle">Qualitative policy rollouts</p>
-            </div>
+        <div class="column">
+          <div class="metric-card">
+            <p class="metric-value">+15.5 pp</p>
+            <p class="metric-label">over MVP</p>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
-<section class="section" id="ablation">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Ablations</h2>
-        <div class="content has-text-justified">
-          <p>
-            These placeholders are ready for the final ablation figures or tables. They are intended
-            to compare the drifting objective against closely controlled alternatives and to expose
-            the effect of key top-K hyperparameters.
-          </p>
-        </div>
+      <section class="result-subsection">
+        <h3 class="title is-4 has-text-centered">Main Offline-to-Online RL Results</h3>
+        <p class="result-caption">
+          Success rate (%) on Robomimic and OGBench tasks under the offline-to-online RL setting.
+          Each cell reports mean ± std over 5 seeds. Best results are shown in <strong>bold</strong>;
+          second-best results are <span class="second-best">underlined</span>.
+        </p>
 
-        <div class="columns is-centered">
-          <div class="column">
-            <div class="placeholder-media placeholder-media-small">
-              <div>
-                <p class="placeholder-title">Drifting vs MeanFlow</p>
-                <p class="placeholder-subtitle">Identical top-K loss</p>
-              </div>
+        <div class="table-scroll">
+          <table class="main-results-table">
+            <thead>
+              <tr class="group-header">
+                <th rowspan="2">Method</th>
+                <th colspan="3">Robomimic</th>
+                <th colspan="3">Cube-double</th>
+                <th colspan="3">Cube-triple</th>
+                <th colspan="3">Cube-quadruple-100m</th>
+                <th rowspan="2">Avg.</th>
+              </tr>
+              <tr>
+                <th>lift</th>
+                <th>square</th>
+                <th>can</th>
+                <th>task2</th>
+                <th>task3</th>
+                <th>task4</th>
+                <th>task2</th>
+                <th>task3</th>
+                <th>task4</th>
+                <th>task2</th>
+                <th>task3</th>
+                <th>task4</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="method">BFN</td>
+                <td>97.6<span class="pm">±2</span></td>
+                <td>32.8<span class="pm">±8</span></td>
+                <td>82.0<span class="pm">±2</span></td>
+                <td>86.0<span class="pm">±5</span></td>
+                <td>88.8<span class="pm">±5</span></td>
+                <td>27.2<span class="pm">±8</span></td>
+                <td>7.6<span class="pm">±9</span></td>
+                <td>6.8<span class="pm">±3</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>32.4<span class="pm">±21</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>38.4</td>
+              </tr>
+
+              <tr>
+                <td class="method">QC-BFN</td>
+                <td>99.6<span class="pm">±1</span></td>
+                <td class="second-best">88.4<span class="pm">±4</span></td>
+                <td class="second-best">90.6<span class="pm">±3</span></td>
+                <td class="second-best">99.8<span class="pm">±0</span></td>
+                <td class="best">99.8<span class="pm">±0</span></td>
+                <td>92.6<span class="pm">±6</span></td>
+                <td>87.4<span class="pm">±10</span></td>
+                <td class="second-best">80.8<span class="pm">±4</span></td>
+                <td>33.4<span class="pm">±9</span></td>
+                <td>95.8<span class="pm">±2</span></td>
+                <td>63.2<span class="pm">±10</span></td>
+                <td>74.2<span class="pm">±11</span></td>
+                <td>83.8</td>
+              </tr>
+
+              <tr class="separator">
+                <td class="method">FQL</td>
+                <td>96.8<span class="pm">±2</span></td>
+                <td>10.8<span class="pm">±7</span></td>
+                <td>58.4<span class="pm">±8</span></td>
+                <td>93.2<span class="pm">±8</span></td>
+                <td>91.2<span class="pm">±5</span></td>
+                <td>6.0<span class="pm">±6</span></td>
+                <td>0.4<span class="pm">±1</span></td>
+                <td>6.4<span class="pm">±8</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>0.0<span class="pm">±0</span></td>
+                <td>30.3</td>
+              </tr>
+
+              <tr>
+                <td class="method">QC-FQL</td>
+                <td class="best">100.0<span class="pm">±0</span></td>
+                <td>72.0<span class="pm">±9</span></td>
+                <td class="best">94.4<span class="pm">±2</span></td>
+                <td class="best">100.0<span class="pm">±0</span></td>
+                <td class="best">99.8<span class="pm">±0</span></td>
+                <td class="best">99.8<span class="pm">±0</span></td>
+                <td class="second-best">88.2<span class="pm">±2</span></td>
+                <td>60.4<span class="pm">±12</span></td>
+                <td class="second-best">51.4<span class="pm">±24</span></td>
+                <td class="second-best">98.0<span class="pm">±2</span></td>
+                <td class="second-best">85.0<span class="pm">±7</span></td>
+                <td class="second-best">92.2<span class="pm">±7</span></td>
+                <td class="second-best">86.8</td>
+              </tr>
+
+              <tr class="separator">
+                <td class="method">MVP</td>
+                <td class="second-best">99.8<span class="pm">±0</span></td>
+                <td>79.4<span class="pm">±4</span></td>
+                <td>83.6<span class="pm">±5</span></td>
+                <td>98.4<span class="pm">±1</span></td>
+                <td>98.6<span class="pm">±1</span></td>
+                <td>94.8<span class="pm">±4</span></td>
+                <td>86.2<span class="pm">±4</span></td>
+                <td>57.2<span class="pm">±10</span></td>
+                <td>31.0<span class="pm">±20</span></td>
+                <td>96.6<span class="pm">±2</span></td>
+                <td>47.2<span class="pm">±30</span></td>
+                <td>91.2<span class="pm">±2</span></td>
+                <td>80.3</td>
+              </tr>
+
+              <tr class="ours-row">
+                <td class="method ours-method">DFP (Ours)</td>
+                <td class="best">100.0<span class="pm">±0</span></td>
+                <td class="best">93.2<span class="pm">±2</span></td>
+                <td class="second-best">90.6<span class="pm">±3</span></td>
+                <td class="best">100.0<span class="pm">±0</span></td>
+                <td class="second-best">99.6<span class="pm">±1</span></td>
+                <td class="second-best">99.6<span class="pm">±1</span></td>
+                <td class="best">98.4<span class="pm">±1</span></td>
+                <td class="best">91.6<span class="pm">±2</span></td>
+                <td class="best">81.2<span class="pm">±6</span></td>
+                <td class="best">99.6<span class="pm">±1</span></td>
+                <td class="best">96.6<span class="pm">±2</span></td>
+                <td class="best">99.0<span class="pm">±2</span></td>
+                <td class="best">95.8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="result-subsection">
+        <h3 class="title is-4 has-text-centered">Full Offline + Online Training Curves</h3>
+        <p class="result-caption">
+          Success rate over offline pretraining and online fine-tuning phases across Robomimic and OGBench tasks.
+        </p>
+
+        <div class="figure-scroll">
+          <img
+            class="result-curve-svg"
+            src="./static/images/training_curves.svg"
+            alt="Full offline and online training curves">
+        </div>
+      </section>
+
+      <section class="result-subsection qualitative-section">
+        <h3 class="title is-4 has-text-centered">Qualitative Rollouts</h3>
+        <p class="result-caption">
+          Representative DFP rollouts on Robomimic and OGBench manipulation tasks.
+        </p>
+
+        <div class="qualitative-grid">
+          <div class="rollout-card">
+            <div class="rollout-video-frame">
+              <video class="rollout-video" autoplay muted loop playsinline controls>
+                <source src="./static/videos/robomimic_can.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="rollout-caption">
+              <span class="rollout-title">Robomimic Can</span>
+              <span class="rollout-subtitle">Pick-and-place manipulation</span>
             </div>
           </div>
-          <div class="column">
-            <div class="placeholder-media placeholder-media-small">
-              <div>
-                <p class="placeholder-title">Top-K Loss Weight</p>
-                <p class="placeholder-subtitle">Lambda ablation</p>
-              </div>
+
+          <div class="rollout-card">
+            <div class="rollout-video-frame">
+              <video class="rollout-video" autoplay muted loop playsinline controls data-playback-rate="0.65">
+                <source src="./static/videos/cube_double_task2.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="rollout-caption">
+              <span class="rollout-title">Cube-double</span>
+              <span class="rollout-subtitle">Two-cube rearrangement</span>
             </div>
           </div>
-          <div class="column">
-            <div class="placeholder-media placeholder-media-small">
-              <div>
-                <p class="placeholder-title">Number of Positives</p>
-                <p class="placeholder-subtitle">K ablation</p>
-              </div>
+
+          <div class="rollout-card">
+            <div class="rollout-video-frame">
+              <video class="rollout-video" autoplay muted loop playsinline controls data-playback-rate="0.65">
+                <source src="./static/videos/cube_triple_task2.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="rollout-caption">
+              <span class="rollout-title">Cube-triple</span>
+              <span class="rollout-subtitle">Three-cube rearrangement</span>
+            </div>
+          </div>
+
+          <div class="rollout-card">
+            <div class="rollout-video-frame">
+              <video class="rollout-video" autoplay muted loop playsinline controls data-playback-rate="0.65">
+                <source src="./static/videos/cube_quadruple_task2.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="rollout-caption">
+              <span class="rollout-title">Cube-quadruple</span>
+              <span class="rollout-subtitle">Long-horizon four-cube rearrangement</span>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   </div>
 </section>
@@ -331,10 +530,10 @@
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
-      <a class="icon-link" href="#">
+      <a class="icon-link" href="./static/pdfs/dfp.pdf">
         <i class="fas fa-file-pdf"></i>
       </a>
-      <a class="icon-link is-disabled" aria-disabled="true" title="Code coming soon">
+      <a class="icon-link is-disabled has-tooltip" aria-disabled="true" data-tooltip="Code (coming soon)" title="Code (coming soon)">
         <i class="fab fa-github"></i>
       </a>
     </div>

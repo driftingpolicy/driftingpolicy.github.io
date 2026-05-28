@@ -23,9 +23,46 @@ body {
 }
 
 .is-disabled {
-  pointer-events: none;
   opacity: 0.72;
   cursor: not-allowed;
+}
+
+.has-tooltip {
+  position: relative;
+}
+
+.has-tooltip:hover::after,
+.has-tooltip:focus::after {
+  background: #363636;
+  border-radius: 4px;
+  bottom: calc(100% + 8px);
+  color: #fff;
+  content: attr(data-tooltip);
+  font-size: 0.8rem;
+  font-weight: 500;
+  left: 50%;
+  line-height: 1.2;
+  padding: 0.4rem 0.55rem;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 20;
+}
+
+.has-tooltip:hover::before,
+.has-tooltip:focus::before {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #363636;
+  bottom: calc(100% + 2px);
+  content: "";
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  z-index: 20;
 }
 
 .placeholder-media {
@@ -40,6 +77,126 @@ body {
   min-height: 220px;
   padding: 2rem;
   text-align: center;
+}
+
+.paper-artifact {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  color: #4a4a4a;
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  min-height: 280px;
+  overflow-x: auto;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.paper-artifact-small {
+  min-height: 220px;
+}
+
+.equation-artifact {
+  background: #fbfbfb;
+  min-height: 180px;
+  padding: 1.5rem;
+}
+
+.wide-section .container {
+  max-width: 1280px;
+}
+
+.section-intro {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.media-grid {
+  margin-top: 0.5rem;
+}
+
+.markdown-slot.is-loaded {
+  align-items: stretch;
+  display: block;
+  min-height: 0;
+  text-align: left;
+}
+
+.markdown-content {
+  color: #222;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.markdown-content h3 {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.markdown-content p {
+  margin: 0.75rem 0;
+}
+
+.markdown-content img,
+.markdown-content video {
+  border-radius: 4px;
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.markdown-content video {
+  width: 100%;
+}
+
+.markdown-content .figure-caption {
+  color: #555;
+  font-size: 0.95rem;
+  margin: 0.75rem auto 0;
+  max-width: 980px;
+  text-align: center;
+}
+
+.math-block {
+  font-size: 1.05rem;
+  margin: 1rem auto;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+.markdown-table-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.markdown-table-scroll table {
+  background: #fff;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 0 auto;
+  min-width: 900px;
+  white-space: nowrap;
+}
+
+.markdown-table-scroll th,
+.markdown-table-scroll td {
+  border: 1px solid #d6d6d6;
+  padding: 0.45rem 0.6rem;
+  text-align: center;
+}
+
+.markdown-table-scroll th {
+  background: #f5f5f5;
+  font-weight: 700;
 }
 
 .placeholder-media-large {
@@ -73,6 +230,305 @@ body {
 
 .method-grid .content {
   height: 100%;
+}
+
+.method-card,
+.method-note {
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  margin: 1.25rem 0;
+  padding: 1.35rem 1.5rem;
+}
+
+.method-card .title,
+.method-note .title {
+  margin-bottom: 0.75rem;
+}
+
+.method-card p,
+.method-note p {
+  color: #333;
+  line-height: 1.65;
+  margin: 0.75rem 0 0;
+}
+
+.equation-box {
+  background: #f7f7f7;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  color: #111;
+  margin: 0.9rem 0;
+  overflow-x: auto;
+  padding: 0.95rem 1rem;
+  text-align: center;
+}
+
+.method-note {
+  background: #fbfbfb;
+}
+
+.metric-grid {
+  margin: 1rem auto 0.25rem;
+  max-width: 900px;
+}
+
+.metric-card {
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  height: 100%;
+  padding: 0.8rem 0.7rem;
+  text-align: center;
+}
+
+.metric-value {
+  color: #111;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 0.15rem;
+}
+
+.metric-label {
+  color: #555;
+  font-size: 0.88rem;
+  margin-bottom: 0;
+}
+
+.optional-rollouts .paper-artifact {
+  min-height: 180px;
+}
+
+.result-subsection {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.result-caption {
+  max-width: 980px;
+  margin: 0 auto 1rem auto;
+  color: #555;
+  font-size: 0.98rem;
+  text-align: center;
+  line-height: 1.55;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem 0 1rem 0;
+}
+
+.main-results-table {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+  margin: 0 auto;
+  background: #ffffff;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.main-results-table th,
+.main-results-table td {
+  padding: 0.55rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #e8e8e8;
+  white-space: nowrap;
+}
+
+.main-results-table thead th {
+  background: #f7f7f8;
+  font-weight: 700;
+  color: #222;
+  border-bottom: 1.5px solid #d8d8d8;
+}
+
+.main-results-table .group-header th {
+  background: #f1f2f4;
+  font-size: 0.86rem;
+}
+
+.main-results-table th:first-child,
+.main-results-table .method {
+  text-align: left;
+  font-weight: 600;
+  color: #222;
+  position: sticky;
+  left: 0;
+  background: inherit;
+  z-index: 1;
+  border-right: 1px solid #e5e5e5;
+}
+
+.main-results-table thead th:first-child {
+  background: #f1f2f4;
+  z-index: 3;
+}
+
+.main-results-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.main-results-table tbody tr:nth-child(even) {
+  background: #fbfbfc;
+}
+
+.main-results-table tbody tr.separator td {
+  border-top: 1.5px solid #d7d7d7;
+}
+
+.main-results-table .pm {
+  font-size: 0.72em;
+  color: #666;
+  margin-left: 0.12rem;
+}
+
+.main-results-table .best {
+  font-weight: 800;
+  color: #111;
+}
+
+.main-results-table .second-best,
+.second-best {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.2px;
+}
+
+.main-results-table .ours-row {
+  background: rgba(49, 130, 206, 0.09) !important;
+}
+
+.main-results-table .ours-row td {
+  border-top: 2px solid rgba(49, 130, 206, 0.25);
+  border-bottom: 2px solid rgba(49, 130, 206, 0.25);
+}
+
+.main-results-table .ours-method {
+  color: #1f6fbf;
+  font-weight: 800;
+}
+
+.figure-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem 0 1rem 0;
+}
+
+.figure-scroll img {
+  display: block;
+  margin: 0 auto;
+  height: auto;
+}
+
+.result-curve-svg {
+  width: 100%;
+  max-width: 1200px;
+  min-width: 900px;
+}
+
+.qualitative-section {
+  margin-top: 3rem;
+}
+
+.qualitative-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  max-width: 1100px;
+  margin: 1.5rem auto 0 auto;
+}
+
+.rollout-card {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.055);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.rollout-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.075);
+  transform: translateY(-2px);
+}
+
+.rollout-video-frame {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f2f2f2;
+}
+
+.rollout-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.1);
+  transform-origin: center center;
+}
+
+.rollout-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem 1rem 1rem;
+}
+
+.rollout-title {
+  font-weight: 700;
+  color: #222;
+  font-size: 1rem;
+}
+
+.rollout-subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+@media screen and (max-width: 768px) {
+  .result-caption {
+    font-size: 0.9rem;
+    padding: 0 1rem;
+  }
+
+  .table-scroll {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .main-results-table {
+    min-width: 1180px;
+    font-size: 0.78rem;
+  }
+
+  .main-results-table th,
+  .main-results-table td {
+    padding: 0.5rem 0.45rem;
+  }
+
+  .result-curve-svg {
+    min-width: 1000px;
+  }
+
+  .qualitative-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+
 }
 
 
