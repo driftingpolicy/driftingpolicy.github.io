@@ -125,6 +125,30 @@ body {
   text-align: left;
 }
 
+.teaser .paper-artifact {
+  margin: 0 auto 1.5rem;
+  max-width: 720px;
+}
+
+.teaser .paper-artifact.is-loaded {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.teaser .markdown-content img,
+.teaser .markdown-content video {
+  border-radius: 6px;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.12));
+  max-height: 560px;
+  object-fit: contain;
+  width: auto;
+}
+
 .markdown-content {
   color: #222;
   font-size: 1rem;
