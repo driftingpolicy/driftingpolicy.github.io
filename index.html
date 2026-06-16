@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="Drifting Field Policy is a one-step generative policy via Wasserstein gradient flow for offline-to-online reinforcement learning.">
-  <meta name="keywords" content="Drifting Field Policy, DFP, reinforcement learning, generative policy, Wasserstein gradient flow">
+        content="Drifting Field Policy (DFP) is a one-step, non-ODE generative robot policy. It removes the output-to-trajectory credit assignment of diffusion/flow policies by directly drifting generated actions toward high-value regions for RL fine-tuning.">
+  <meta name="keywords" content="Drifting Field Policy, DFP, drifting models, reinforcement learning, generative policy, one-step policy, Wasserstein gradient flow, diffusion policy, flow matching, robot manipulation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Drifting Field Policy</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
@@ -18,6 +18,93 @@
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
+  <style>
+    .dfp-teaser {
+      padding: 0;
+    }
+    .dfp-teaser-img {
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+    .dfp-teaser-caption {
+      max-width: 720px;
+      margin: 1.1rem auto 0;
+      text-align: center;
+      font-size: 1.0rem;
+      line-height: 1.6;
+      color: #4a4a4a;
+    }
+    .dfp-teaser-caption .topk-dot {
+      color: #222;
+      font-weight: 700;
+    }
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+    .req-card {
+      background: #fff;
+      border: 1px solid #e6e6ec;
+      border-radius: 10px;
+      padding: 1.1rem 1.2rem;
+      box-shadow: 0 4px 16px rgba(20, 20, 40, 0.05);
+    }
+    .req-card .req-index {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-weight: 700;
+      color: rgb(0, 65, 145);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+    }
+    .req-card .req-title {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin: 0.2rem 0 0.4rem;
+    }
+    .req-card p {
+      font-size: 0.92rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      .req-grid { grid-template-columns: 1fr; }
+    }
+    .takeaway {
+      border-left: 3px solid rgba(0, 65, 145, 0.35);
+      padding: 0.2rem 0 0.2rem 1rem;
+      margin-top: 1.2rem;
+      color: #333;
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+    .ablation-table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      font-size: 1.05rem;
+      border-top: 1px solid #e6e6ec;
+    }
+    .ablation-table th, .ablation-table td {
+      padding: 0.5rem 1.1rem;
+      text-align: center;
+      border-bottom: 1px solid #e6e6ec;
+    }
+    .ablation-table thead th {
+      font-weight: 700;
+      background: #ffffff;
+      color: #222;
+      border-bottom: 1.5px solid rgba(0, 65, 145, 0.2);
+    }
+    .ablation-table .row-k { font-weight: 700; }
+    .ablation-table .avg-col { font-weight: 700; }
+  </style>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
@@ -38,34 +125,6 @@
   <script src="./static/js/index.js"></script>
 </head>
 <body>
-
-<!--
-  Asset TODOs are tracked in TODO.md.
-  Replace placeholder blocks below as figures, tables, videos, and links become available.
--->
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="#">
-        <span class="icon">
-          <i class="fas fa-home"></i>
-        </span>
-      </a>
-      <a class="navbar-item" href="#abstract">Abstract</a>
-      <a class="navbar-item" href="#method">Method</a>
-      <a class="navbar-item" href="#results">Results</a>
-      <a class="navbar-item" href="#BibTeX">BibTeX</a>
-    </div>
-  </div>
-</nav>
 
 <section class="hero">
   <div class="hero-body">
@@ -117,12 +176,13 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="#BibTeX"
-                   class="external-link button is-normal is-rounded is-dark">
+                <a role="button" id="bibtex-copy-btn"
+                   class="external-link button is-normal is-rounded is-dark"
+                   style="cursor: pointer;" onclick="copyBibtex()">
                   <span class="icon">
                     <i class="fas fa-quote-right"></i>
                   </span>
-                  <span>BibTeX</span>
+                  <span id="bibtex-copy-label">BibTeX</span>
                 </a>
               </span>
             </div>
@@ -136,38 +196,94 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <div class="paper-artifact markdown-slot" data-markdown-section="teaser">
-        <div>
-          <p class="placeholder-title">Teaser Figure or Video</p>
-          <p class="placeholder-subtitle">Replace with <code>static/images/teaser.png</code> or <code>static/videos/teaser.mp4</code></p>
-        </div>
+      <div class="dfp-teaser">
+        <h2 class="subtitle has-text-centered">
+          <strong>TL;DR</strong> - <span>Drifting Field Policy (DFP)</span> is a novel one-step generative policy
+          that avoids the trajectory-level credit assignment of diffusion policies in RL fine-tuning.
+        </h2>
+        <img class="dfp-teaser-img" src="./asset/teaser.png"
+             alt="Drifting Field Policy teaser: particle x is transported across a Q-value landscape (blue low, red high) toward the top-K high-value actions sampled from the old policy.">
+        <p class="dfp-teaser-caption">
+          DFP transports the current policy samples
+          $\pi_\theta$ across the $Q$-value landscape (blue: low, red: high) toward the
+          <span class="topk-dot">top-$K$</span> high-value actions sampled from $\pi_{\mathrm{old}}$,
+          following the drifting field
+          $\mathbf{V} = \mathbf{V}_p^{+} - \mathbf{V}_q^{-}$
+          &mdash; attraction toward high-$Q$ actions, repulsion from current samples.
+        </p>
       </div>
-      <h2 class="subtitle has-text-centered">
-        <strong>TL;DR</strong> - <span class="dfp">DFP</span> directly updates a one-step generative policy in action space
-        through a drifting-field objective, avoiding ODE trajectory-level credit assignment.
-      </h2>
     </div>
   </div>
 </section>
 
-<section class="section" id="abstract">
+<section class="hero is-light is-small" id="motivation">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Output-to-Trajectory Credit Assignment in Diffusion/Flow Policies</h2>
+      <div class="content has-text-justified">
+        <p>
+          A generative action policy must capture (1) <strong>multimodal actions</strong>, (2) run in
+          <strong>real time</strong>, and (3) <strong>improve through RL</strong>. Few-step
+          diffusion/flow policies largely solve the first two; the remaining tension is RL
+          post-training. Given a current state $s$, they generate an action $a$ by integrating a time-indexed velocity
+          field along an ODE trajectory:
+        </p>
+      </div>
+      <div class="equation-box">
+        $$
+        a = x_1 = x_0 + \int_0^1 v_\theta(x_t, t, s)\,dt,
+        \qquad x_0 \sim \mathcal{N}(0, I).
+        $$
+      </div>
+      <div class="content has-text-justified">
+        <p>
+          In RL fine-tuning, the reward signal $Q_\phi(s, a)$ is defined on the
+          <strong>final executed action</strong> $a = x_1$, yet the policy is parameterized by
+          the intermediate velocities $v_\theta(x_t, t, s)$ along the whole trajectory. This
+          raises a hard <em>output-to-trajectory credit assignment</em> problem:
+        </p>
+      </div>
+      <p class="problem-question">
+        "Which intermediate velocity should receive how much credit?"
+      </p>
+      <div class="content has-text-justified">
+        <p>
+          Crucially, this burden persists even for <strong>one-step diffusion variants</strong>
+          (<a href="https://arxiv.org/abs/2505.13447">MeanFlow</a>,
+          <a href="https://arxiv.org/abs/2303.01469">Consistency Models</a>):
+          sampling is one-step, but training remains
+          trajectory-level, since all intermediate shortcuts must align with the same endpoint.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
   <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Why a Drifting Policy for RL Fine-Tuning?</h2>
         <div class="content has-text-justified">
           <p>
-            Drifting Field Policy (DFP) is a non-ODE one-step generative policy built on drifting
-            models. It frames policy improvement as a Wasserstein-2 gradient flow toward the soft
-            policy improvement target. The resulting drift field combines attraction toward high-Q
-            actions with repulsion and regularization from the current or anchor policy.
+            DFP and few-step diffusion/flow policies both map noise to an action in a single
+            pass, but parameterize that map differently. Two structural consequences make the
+            non-ODE drifting policy especially suited to RL fine-tuning:
           </p>
-          <p>
-            Because the exact soft target is intractable, DFP uses a tractable top-K
-            critic-selected action surrogate that makes the method easy to implement. Experiments
-            on Robomimic and OGBench show that DFP achieves state-of-the-art performance among
-            one-step and ODE-based generative policies.
-          </p>
+          <ul>
+            <li>
+              <strong>Direct action updates vs. velocity re-fitting.</strong> DFP supervises the
+              action output directly, so a reward signal shifts the policy in one step. ODE
+              policies — even one-step variants — still learn a time-indexed velocity field, so
+              improving the policy means globally re-fitting the fields across the whole ODE trajectory, under
+              a self consistency constraint and trajectory-level credit assignment.
+            </li>
+            <li>
+              <strong>Built-in repulsion from current samples.</strong> Each update of DFP not only
+              pulls actions toward high-value targets, but also pushes them away from the current policy's
+              own (typically lower-value) samples — a mechanism absent in diffusion/flow policies.
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -178,78 +294,175 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Method</h2>
+        <h2 class="title is-3">Drifting Field Policy</h2>
 
         <div class="content has-text-justified">
           <p>
-            Drifting Field Policy (DFP) turns policy improvement into a direct action-space
-            drifting update for a one-step generative policy. Instead of learning a denoising chain
-            or an ODE trajectory, DFP learns a pushforward map that transports noise samples into
-            improved actions in a single step.
+            Built on drifting models (<a href="https://arxiv.org/abs/2602.04770">Deng et al., 2026</a>), Drifting Field Policy (DFP) directly parameterizes the action
+            distribution with a single-pass <em>pushforward</em> map $f_\theta$, with
+            <strong>no time variable and no ODE trajectory</strong>. 
+            <!-- Built on drifting models -->
+            <!-- (<a href="https://arxiv.org/abs/2602.04770">Deng et al., 2026</a>), it updates the -->
+            <!-- policy directly at the action output toward high-value regions. -->
           </p>
         </div>
 
         <div class="method-card">
-          <h3 class="title is-4">A. One-Step Generative Policy</h3>
+          <h3 class="title is-4">A. One-Step Pushforward Policy</h3>
           <div class="equation-box">
             $$
-            \pi_\theta(\cdot \mid s) = [f_\theta(\cdot, s)]_\# p_\epsilon,
+            a = f_\theta(\epsilon, s), \quad \epsilon \sim p_\epsilon,
             \qquad
-            a = f_\theta(\epsilon, s),
-            \qquad
-            \epsilon \sim \mathcal{N}(0, I).
+            \pi_\theta(\cdot \mid s) = [f_\theta(\cdot, s)]_\# \, p_\epsilon.
             $$
           </div>
           <p>
-            The policy is represented as the pushforward of a simple noise distribution through a
-            conditional action generator. At inference time, DFP samples once and maps directly to
-            an action, with no denoising chain or ODE solve.
+            A single forward pass maps a noise sample directly to an action. Compared to
+            ODE-based generation, this gives (i) one-step action generation and (ii)
+            <strong>no ODE trajectory &rarr; no output-to-trajectory credit assignment</strong>.
           </p>
         </div>
 
         <div class="method-card">
-          <h3 class="title is-4">B. Wasserstein Gradient Flow Policy Improvement</h3>
+          <h3 class="title is-4">B. Drifting Field for Distribution Matching</h3>
+          <p>
+            Let $p$ be a target distribution and $q := [f_\theta]_\# p_\epsilon$ the
+            pushforward distribution. The <em>drifting field</em> moves generated particles $x$
+            toward positives $p$ and away from negatives $q$, built from kernel mean shifts:
+          </p>
           <div class="equation-box">
             $$
-            \pi^+(a \mid s)
-            =
-            \frac{\pi_{\mathrm{old}}(a \mid s)\exp(Q_\phi(s,a)/\alpha)}{Z(s)}.
+            \mathbf{V}_{p,q}(x) = \mathbf{V}_p^{+}(x) - \mathbf{V}_q^{-}(x)
+            = \frac{\mathbb{E}_{y^{+}\sim p}\!\left[k(x,y^{+})(y^{+}-x)\right]}
+                   {\mathbb{E}_{y^{+}\sim p}\!\left[k(x,y^{+})\right]}
+            - \frac{\mathbb{E}_{y^{-}\sim q}\!\left[k(x,y^{-})(y^{-}-x)\right]}
+                   {\mathbb{E}_{y^{-}\sim q}\!\left[k(x,y^{-})\right]}.
             $$
           </div>
           <p>
-            DFP interprets policy improvement as a Wasserstein-2 gradient flow toward the soft
-            policy improvement target. The ideal drift combines attraction toward high-Q actions
-            with score-based repulsion and regularization around the current or anchor policy.
+            Here $k(\cdot,\cdot)$ is a similarity kernel, e.g., the
+            Gaussian kernel $k(x,y) = \exp\!\left(-\|x-y\|^2 / 2h^2\right)$.
+          </p>
+          <p>
+            $f_\theta$ is trained by fixed-point regression that drives the drifting field to
+            zero (with a stop-gradient on the drifted target), so that $q \to p$. This gives the
+            <strong>general drifting training objective</strong>, defined for any target/source
+            pair $(p, q)$:
+          </p>
+          <div class="equation-box">
+            $$
+            \mathcal{L}_{\mathrm{drift}}(\theta; p, q)
+            = \mathbb{E}_{\epsilon\sim p_\epsilon}
+              \big\| x - \mathrm{sg}\!\left(x + \mathbf{V}_{p,q}(x)\right) \big\|^2,
+            \quad x = f_\theta(\epsilon).
+            $$
+          </div>
+          <p>
+            Since $\mathcal{L}_{\mathrm{drift}}$ is parameterized by the positive (target) $p$ and
+            the negative (source) $q$, the same objective applies to any choice of $(p, q)$ — a
+            flexibility we exploit next by plugging in different targets for policy improvement
+            and behavior cloning.
           </p>
         </div>
 
         <div class="method-card">
-          <h3 class="title is-4">C. Top-K Drifting Surrogate</h3>
+          <h3 class="title is-4">C. RL Fine-Tuning as Distribution Matching</h3>
+          <p>
+            RL fine-tuning targets the reward-tilted policy
+          </p>
           <div class="equation-box">
             $$
-            P_K(s) =
-            \mathrm{TopK}_{a^{(j)} \sim \pi_{\mathrm{old}}(\cdot \mid s)}
-            Q_\phi(s,a^{(j)}),
-            \qquad
-            \mathcal{L}_{\mathrm{top}\text{-}K}
-            =
-            \mathcal{L}_{\mathrm{drift}}(\theta; P_K, \pi_\theta).
+            \pi^{+}(\cdot \mid s)
+            = \arg\max_{\pi}\;
+              \mathbb{E}_{a\sim\pi(\cdot\mid s)}\!\left[Q_\phi(s,a)\right]
+              - \alpha\, D_{\mathrm{KL}}\!\left(\pi(\cdot\mid s)\,\|\,\pi_{\mathrm{old}}(\cdot\mid s)\right)
+            = \frac{\pi_{\mathrm{old}}(a\mid s)\exp\!\left(Q_\phi(s,a)/\alpha\right)}{Z(s)}.
             $$
           </div>
           <p>
-            Because the exact soft target is intractable, DFP samples candidate actions from the
-            old policy, selects the top-K actions under the critic, and uses those actions as a
-            practical positive set in the drifting loss.
+            Policy improvement is then just the general drift objective
+            $\mathcal{L}_{\mathrm{drift}}$ from <strong>(B)</strong>, instantiated with the
+            negative source $q = \pi_\theta$ and the positive target $p = \pi^{+}$ (whereas
+            $p = p_{\mathrm{data}}$ recovers behavior cloning):
           </p>
+          <div class="equation-box">
+            $$
+            \mathcal{L}_{\mathrm{PI}}(\theta)
+            = \mathcal{L}_{\mathrm{drift}}(\theta; \pi^{+}, \pi_\theta)
+            = \mathbb{E}_{s,\epsilon}
+              \big\| \hat a - \mathrm{sg}\!\left(\hat a + \mathbf{V}_{\pi^{+},\pi_\theta}(\hat a)\right) \big\|^2,
+            \quad \hat a = f_\theta(\epsilon, s).
+            $$
+          </div>
+          <div class="takeaway">
+            DFP directly updates the generated actions toward high-value regions,
+            <strong>without output-to-trajectory credit assignment</strong>.
+          </div>
         </div>
 
-        <div class="method-note">
-          <h3 class="title is-4">Why Non-ODE Matters</h3>
+        <div class="method-card">
+          <h3 class="title is-4">D. Interpretation of the DFP Update</h3>
+          <div class="equation-box">
+            $$
+            \mathbf{V}_{\pi^{+},\pi_\theta}(a\mid s)
+            = h^2\!\left(\nabla_a \log \pi^{+}_{\mathrm{kde}}(a\mid s)
+                       - \nabla_a \log \pi_{\theta,\mathrm{kde}}(a\mid s)\right)
+            \simeq
+            \underbrace{\tfrac{h^2}{\alpha}\nabla_a Q_\phi(s,a)}_{\nabla_a Q\ \text{ascent}}
+            + \underbrace{h^2\left(\nabla_a \log \pi_{\mathrm{old}} - \nabla_a \log \pi_\theta\right)}_{\text{trust region around } \pi_{\mathrm{old}}}.
+            $$
+          </div>
+          <p>This decomposition follows in two steps:</p>
+          <ol>
+            <li>
+              <strong>Drifting field = KDE-approximated score matching.</strong>
+              The kernel mean shift equals the difference of KDE-smoothed scores,
+              $\mathbf{V}_{p,q} \simeq h^2(\nabla_a\log p_{\mathrm{kde}} - \nabla_a\log q_{\mathrm{kde}})$
+              (<a href="https://arxiv.org/abs/2603.10592">Cao et al., 2026</a>;
+              <a href="https://dl.acm.org/doi/10.1109/34.400568">Cheng, 1995</a>).
+            </li>
+            <li>
+              <strong>Substitute the score of $\pi^{+}$.</strong> Plugging
+              $\nabla_a\log\pi^{+} = \nabla_a\log\pi_{\mathrm{old}} + \tfrac{1}{\alpha}\nabla_a Q_\phi$
+               yields (1) a $\nabla_a Q$ ascent and (2) a
+              trust region around $\pi_{\mathrm{old}}$ via score matching.
+            </li>
+          </ol>
+          <!-- <p>
+            Note that this update needs <strong>neither</strong> a critic Jacobian $\nabla_\theta Q$ (as in
+            DDPG-style updates) <strong>nor</strong> an explicit KL computation.
+          </p> -->
+        </div>
+
+        <div class="method-card">
+          <h3 class="title is-4">E. Tractable Top-$K$ Surrogate</h3>
           <p>
-            Diffusion, flow, and MeanFlow policies learn time-indexed velocities or ODE-related
-            objectives, so reward or top-K supervision must be absorbed through the generation
-            trajectory. DFP instead updates the action distribution directly through a one-step
-            pushforward map.
+            The ideal target $\pi^{+}$ is intractable due to the normalizing constant $Z(s)$.
+            DFP approximates it with an empirical <strong>top-$K$</strong> set of high-value
+            actions sampled from $\pi_{\mathrm{old}}$:
+          </p>
+          <div class="equation-box">
+            $$
+            P_K(s) := \mathrm{TopK}_{j}\, Q_\phi\!\left(s, a^{(j)}\right),
+            \qquad a^{(1)}, \dots, a^{(N)} \sim \pi_{\mathrm{old}}(\cdot \mid s),
+            $$
+            $$
+            \mathcal{L}_{\text{top-}K}(\theta; P_K, \pi_\theta)
+            = \mathbb{E}_{s,\epsilon}
+              \big\| \hat a - \mathrm{sg}\!\left(\hat a + \mathbf{V}_{P_K,\pi_\theta}(\hat a)\right) \big\|^2.
+            $$
+          </div>
+          <p>Practically, each update proceeds in four steps:</p>
+          <ol>
+            <li>Sample $N$ candidates from $\pi_{\mathrm{old}}(a\mid s)$</li>
+            <li>Score them with the critic $Q_\phi$</li>
+            <li>Select the top-$K$ high-value actions</li>
+            <li>Update $\pi_\theta$ toward the top-$K$ region</li>
+          </ol>
+          <p>
+            In practice, this top-$K$ loss is what we optimize &mdash; effectively behavior
+            cloning on the top-$K$ critic-selected actions, with a bounded approximation error to
+            the ideal update $\mathcal{L}_{\mathrm{PI}}$. (See the paper for more details.)
           </p>
         </div>
       </div>
@@ -257,50 +470,24 @@
   </div>
 </section>
 
-<section class="hero is-light is-small wide-section" id="results">
+<section class="hero is-small" id="results">
   <div class="hero-body">
-    <div class="container is-max-widescreen">
+    <div class="container is-max-desktop">
       <h2 class="title is-3 has-text-centered">Results</h2>
-      <div class="content has-text-justified section-intro">
+      <div class="content has-text-justified">
         <p>
-          DFP is evaluated on 12 manipulation tasks across Robomimic and OGBench under the
-          offline-to-online RL setting. It achieves the best average success rate among all
-          baselines, ranking first on 9 of 12 tasks and second-best on the remaining 3.
+          Across 12 Robomimic and OGBench manipulation tasks (offline-to-online RL), DFP
+          <strong>outperforms both multi-step and one-step diffusion/flow policies</strong>,
+          reaching the best average success rate with single-pass inference
+          (<strong>+15.5 pp</strong> over its closest baseline, MVP). 
         </p>
       </div>
 
-      <div class="columns is-centered metric-grid">
-        <div class="column">
-          <div class="metric-card">
-            <p class="metric-value">95.8%</p>
-            <p class="metric-label">Avg. Success</p>
-          </div>
-        </div>
-        <div class="column">
-          <div class="metric-card">
-            <p class="metric-value">9/12</p>
-            <p class="metric-label">Best Tasks</p>
-          </div>
-        </div>
-        <div class="column">
-          <div class="metric-card">
-            <p class="metric-value">+9.0 pp</p>
-            <p class="metric-label">over QC-FQL</p>
-          </div>
-        </div>
-        <div class="column">
-          <div class="metric-card">
-            <p class="metric-value">+15.5 pp</p>
-            <p class="metric-label">over MVP</p>
-          </div>
-        </div>
-      </div>
-
       <section class="result-subsection">
-        <h3 class="title is-4 has-text-centered">Main Offline-to-Online RL Results</h3>
+        <h3 class="title is-4 has-text-centered">Main Results</h3>
         <p class="result-caption">
           Success rate (%) on Robomimic and OGBench tasks under the offline-to-online RL setting.
-          Each cell reports mean ± std over 5 seeds. Best results are shown in <strong>bold</strong>;
+          Each cell reports the mean over 5 seeds. Best results are shown in <strong>bold</strong>;
           second-best results are <span class="second-best">underlined</span>.
         </p>
 
@@ -419,19 +606,19 @@
 
               <tr class="ours-row">
                 <td class="method ours-method">DFP (Ours)</td>
-                <td class="best">100.0<span class="pm">±0</span></td>
-                <td class="best">93.2<span class="pm">±2</span></td>
-                <td class="second-best">90.6<span class="pm">±3</span></td>
-                <td class="best">100.0<span class="pm">±0</span></td>
-                <td class="second-best">99.6<span class="pm">±1</span></td>
-                <td class="second-best">99.6<span class="pm">±1</span></td>
-                <td class="best">98.4<span class="pm">±1</span></td>
-                <td class="best">91.6<span class="pm">±2</span></td>
-                <td class="best">81.2<span class="pm">±6</span></td>
-                <td class="best">99.6<span class="pm">±1</span></td>
-                <td class="best">96.6<span class="pm">±2</span></td>
-                <td class="best">99.0<span class="pm">±2</span></td>
-                <td class="best">95.8</td>
+                <td class="best ours-method">100.0<span class="pm">±0</span></td>
+                <td class="best ours-method">93.2<span class="pm">±2</span></td>
+                <td class="second-best ours-method">90.6<span class="pm">±3</span></td>
+                <td class="best ours-method">100.0<span class="pm">±0</span></td>
+                <td class="second-best ours-method">99.6<span class="pm">±1</span></td>
+                <td class="second-best ours-method">99.6<span class="pm">±1</span></td>
+                <td class="best ours-method">98.4<span class="pm">±1</span></td>
+                <td class="best ours-method">91.6<span class="pm">±2</span></td>
+                <td class="best ours-method">81.2<span class="pm">±6</span></td>
+                <td class="best ours-method">99.6<span class="pm">±1</span></td>
+                <td class="best ours-method">96.6<span class="pm">±2</span></td>
+                <td class="best ours-method">99.0<span class="pm">±2</span></td>
+                <td class="best ours-method">95.8</td>
               </tr>
             </tbody>
           </table>
@@ -439,9 +626,10 @@
       </section>
 
       <section class="result-subsection">
-        <h3 class="title is-4 has-text-centered">Full Offline + Online Training Curves</h3>
+        <h3 class="title is-4 has-text-centered">Training Curves</h3>
         <p class="result-caption">
-          Success rate over offline pretraining and online fine-tuning phases across Robomimic and OGBench tasks.
+          Gray and white background indicate offline and online phases, respectively. DFP not only attains a <strong>higher final success rate</strong> but also
+          <strong>converges faster</strong>.
         </p>
 
         <div class="figure-scroll">
@@ -449,6 +637,104 @@
             class="result-curve-svg"
             src="./static/images/training_curves.svg"
             alt="Full offline and online training curves">
+        </div>
+      </section>
+
+      <!-- <section class="result-subsection">
+        <h3 class="title is-4 has-text-centered">Drifting vs. MeanFlow under Identical Loss</h3>
+        <p class="result-caption">
+          The same top-$K$ supervision benefits the two backbones <strong>asymmetrically</strong>:
+          marginally on MeanFlow (+2.4 pp) but substantially on the drifting backbone (+7.4 pp).
+          This isolates the gain as backbone-specific, not merely from top-$K$ supervision.
+        </p>
+
+        <div class="table-scroll">
+          <table class="ablation-table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Backbone</th>
+                <th>$\mathcal{L}_{\text{top-}K}$</th>
+                <th class="avg-col">Avg.</th>
+                <th>$\Delta$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-k">MVP</td>
+                <td>MeanFlow</td>
+                <td>&#10007;</td>
+                <td class="avg-col">80.3</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td class="row-k">MVP w/ $\mathcal{L}_{\text{top-}K}$</td>
+                <td>MeanFlow</td>
+                <td>&#10003;</td>
+                <td class="avg-col">82.7</td>
+                <td>+2.4</td>
+              </tr>
+              <tr>
+                <td class="row-k">DFP w/o $\mathcal{L}_{\text{top-}K}$</td>
+                <td>Drifting</td>
+                <td>&#10007;</td>
+                <td class="avg-col">88.4</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td class="row-k">DFP (Ours)</td>
+                <td>Drifting</td>
+                <td>&#10003;</td>
+                <td class="avg-col">95.8</td>
+                <td>+7.4</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section> -->
+
+      <section class="result-subsection">
+        <h3 class="title is-4 has-text-centered">Top-$K$-of-$N$ Ablation</h3>
+        <p class="result-caption">
+          With $N = 16$, DFP is robust across $K$, with the best performance at $K = 4$.
+          All DFP variants outperform MVP (80.3 avg.).
+        </p>
+
+        <div class="table-scroll">
+          <table class="ablation-table">
+            <thead>
+              <tr>
+                <th>$K$ (of $N=16$)</th>
+                <th>Robo.</th>
+                <th>Cube-2.</th>
+                <th>Cube-3.</th>
+                <th>Cube-4.</th>
+                <th class="avg-col">Avg.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="row-k">$K = 1$</td>
+                <td>95.0</td><td>99.7</td><td>54.5</td><td>94.2</td>
+                <td class="avg-col">85.8</td>
+              </tr>
+              <tr>
+                <td class="row-k">$K = 2$</td>
+                <td>94.6</td><td>100.0</td><td>76.2</td><td>96.8</td>
+                <td class="avg-col">91.9</td>
+              </tr>
+              <tr>
+                <td class="row-k">$K = 4$</td>
+                <td>93.9</td><td>99.7</td><td>90.4</td><td>98.4</td>
+                <td class="avg-col">95.6</td>
+              </tr>
+              <tr>
+                <td class="row-k">$K = 8$</td>
+                <td>88.6</td><td>99.8</td><td>85.5</td><td>96.2</td>
+                <td class="avg-col">92.5</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -512,13 +798,51 @@
   </div>
 </section>
 
+<!-- <section class="section" id="conclusion">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Conclusion</h2>
+        <div class="content has-text-justified">
+          <ul>
+            <li>
+              Action experts require <strong>multimodal action generation</strong>,
+              <strong>real-time inference</strong>, and <strong>policy improvement through RL</strong>.
+            </li>
+            <li>
+              Diffusion policies have made progress, but a mismatch remains in RL training:
+              action-level feedback versus their ODE-based parameterization.
+            </li>
+            <li>
+              DFP removes the ODE dependency with a single-pass pushforward policy, giving
+              <strong>one-step generation</strong> and <strong>direct updates of generated
+              actions toward high-value regions</strong>.
+            </li>
+          </ul>
+          <p>
+            <strong>Limitations.</strong> DFP is studied on simulated continuous-control tasks;
+            high-dimensional observations and sim-to-real deployment remain future work. The
+            top-$K$ loss depends on critic quality (shared with actor-critic methods broadly),
+            and a deeper theoretical account of the non-ODE advantage is still open.
+          </p>
+          <p>
+            <strong>Open questions.</strong> Can drifting models become a general alternative for
+            RL fine-tuning of generative models — scaling to high-dimensional outputs and
+            leveraging pre-trained diffusion models?
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code>@article{koo2026driftingfieldpolicy,
+    <pre><code id="bibtex-code">@article{koo2026driftingfieldpolicy,
   title={Drifting Field Policy: A One-Step Generative Policy via Wasserstein Gradient Flow},
   author={Koo, Juil and Park, Mingue and Choi, Jiwon and Min, Yunhong and Sung, Minhyuk},
-  journal={arXiv preprint},
+  journal={arXiv preprint arXiv:2605.07727},
   year={2026}
 }</code></pre>
   </div>
@@ -549,6 +873,45 @@
     </div>
   </div>
 </footer>
+
+<script>
+  (function () {
+    var btn = document.getElementById('bibtex-copy-btn');
+    var code = document.getElementById('bibtex-code');
+    var label = document.getElementById('bibtex-copy-label');
+    if (!btn || !code || !label) return;
+
+    var copied = false;
+
+    btn.addEventListener('mouseenter', function () {
+      if (!copied) label.textContent = 'Copy';
+    });
+
+    btn.addEventListener('mouseleave', function () {
+      copied = false;
+      label.textContent = 'BibTeX';
+    });
+
+    window.copyBibtex = function () {
+      var text = code.innerText;
+      var onCopied = function () {
+        copied = true;
+        label.textContent = 'Copied';
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onCopied).catch(onCopied);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        onCopied();
+      }
+    };
+  })();
+</script>
 
 </body>
 </html>

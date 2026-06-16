@@ -1,5 +1,43 @@
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.1rem;
+}
+
+a:not(.button):not(.navbar-item) {
+  color: rgb(20, 135, 200);
+}
+
+.title {
+  color: rgb(0, 65, 145) !important;
+  font-weight: 600;
+}
+
+.hero.is-light {
+  background-color: #f5f9fc !important;
+}
+
+.publication-links .button.is-dark {
+  /* background-color: rgb(0, 65, 145); */
+  border-color: rgb(0, 65, 145);
+  color: #fff;
+}
+
+.publication-links .button.is-dark:hover {
+  background-color: rgb(0, 55, 120);
+  border-color: rgb(0, 55, 120);
+  color: #fff;
+}
+
+.publication-authors + .publication-authors {
+  color: rgb(0, 65, 145);
+}
+
+.content strong,
+.content b,
+.method-card strong,
+.method-card b,
+.takeaway strong {
+  font-weight: 600;
 }
 
 
@@ -132,7 +170,7 @@ body {
 }
 
 .markdown-content h3 {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
@@ -213,7 +251,7 @@ body {
 }
 
 .placeholder-title {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 0.35rem;
@@ -234,16 +272,22 @@ body {
 
 .method-card,
 .method-note {
-  background: #fff;
-  border: 1px solid #d8d8d8;
-  border-radius: 8px;
-  margin: 1.25rem 0;
-  padding: 1.35rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  margin: 2rem 0;
+  padding: 0;
 }
 
 .method-card .title,
 .method-note .title {
   margin-bottom: 0.75rem;
+}
+
+.method-card .title.is-4,
+.method-note .title.is-4,
+.result-subsection .title.is-4 {
+  font-size: 1.4rem;
 }
 
 .method-card p,
@@ -253,19 +297,53 @@ body {
   margin: 0.75rem 0 0;
 }
 
+.method-card ol,
+.method-card ul,
+.method-note ol,
+.method-note ul {
+  color: #333;
+  margin: 0.75rem 0 0;
+  padding-left: 1.5rem;
+}
+
+.method-card li,
+.method-note li {
+  line-height: 1.65;
+  margin: 0.2rem 0;
+}
+
 .equation-box {
-  background: #f7f7f7;
-  border: 1px solid #e1e1e1;
-  border-radius: 6px;
+  background: transparent;
+  border: none;
   color: #111;
-  margin: 0.9rem 0;
+  margin: 0.6rem 0;
   overflow-x: auto;
-  padding: 0.95rem 1rem;
+  padding: 0.4rem 0;
   text-align: center;
 }
 
 .method-note {
-  background: #fbfbfb;
+  border-top: 1px solid rgba(0, 65, 145, 0.15);
+  padding-top: 1.25rem;
+}
+
+.hero.is-light .content a:not(.button):not(.dropdown-item):not(.tag) {
+  color: rgb(20, 135, 200) !important;
+}
+
+.hero.is-light .content a:not(.button):not(.dropdown-item):not(.tag):hover {
+  text-decoration: underline;
+}
+
+.problem-question {
+  max-width: 760px;
+  margin: 1.5rem auto;
+  text-align: center;
+  font-size: 1.35rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #1a1a1a;
 }
 
 .metric-grid {
@@ -284,7 +362,7 @@ body {
 
 .metric-value {
   color: #111;
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 1.45rem;
   font-weight: 700;
   line-height: 1.1;
@@ -325,20 +403,18 @@ body {
 
 .main-results-table {
   width: 100%;
-  min-width: 1180px;
+  min-width: 720px;
   border-collapse: collapse;
   margin: 0 auto;
   background: #ffffff;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   line-height: 1.25;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  border-radius: 12px;
-  overflow: hidden;
+  border-top: 1px solid #e8e8e8;
 }
 
 .main-results-table th,
 .main-results-table td {
-  padding: 0.55rem 0.5rem;
+  padding: 0.45rem 0.3rem;
   text-align: center;
   vertical-align: middle;
   border-bottom: 1px solid #e8e8e8;
@@ -346,15 +422,16 @@ body {
 }
 
 .main-results-table thead th {
-  background: #f7f7f8;
+  background: #ffffff;
   font-weight: 700;
   color: #222;
-  border-bottom: 1.5px solid #d8d8d8;
+  border-bottom: 1.5px solid rgba(0, 65, 145, 0.2);
 }
 
 .main-results-table .group-header th {
-  background: #f1f2f4;
-  font-size: 0.86rem;
+  background: #ffffff;
+  font-size: 0.95rem;
+  /* color: rgb(0, 65, 145); */
 }
 
 .main-results-table th:first-child,
@@ -366,20 +443,16 @@ body {
   left: 0;
   background: inherit;
   z-index: 1;
-  border-right: 1px solid #e5e5e5;
 }
 
 .main-results-table thead th:first-child {
-  background: #f1f2f4;
+  background: #ffffff;
   z-index: 3;
 }
 
-.main-results-table tbody tr:nth-child(odd) {
-  background: #ffffff;
-}
-
+.main-results-table tbody tr:nth-child(odd),
 .main-results-table tbody tr:nth-child(even) {
-  background: #fbfbfc;
+  background: #ffffff;
 }
 
 .main-results-table tbody tr.separator td {
@@ -387,9 +460,7 @@ body {
 }
 
 .main-results-table .pm {
-  font-size: 0.72em;
-  color: #666;
-  margin-left: 0.12rem;
+  display: none;
 }
 
 .main-results-table .best {
@@ -405,17 +476,17 @@ body {
 }
 
 .main-results-table .ours-row {
-  background: rgba(49, 130, 206, 0.09) !important;
+  background: rgba(0, 65, 145, 0.10) !important;
 }
 
 .main-results-table .ours-row td {
-  border-top: 2px solid rgba(49, 130, 206, 0.25);
-  border-bottom: 2px solid rgba(49, 130, 206, 0.25);
+  border-top: 1.5px solid rgba(0, 65, 145, 0.30);
+  border-bottom: 1.5px solid rgba(0, 65, 145, 0.30);
 }
 
 .main-results-table .ours-method {
-  color: #1f6fbf;
-  font-weight: 800;
+  color: rgb(0, 65, 145);
+  /* font-weight: 800; */
 }
 
 .figure-scroll {
@@ -453,15 +524,8 @@ body {
 .rollout-card {
   background: #ffffff;
   border: 1px solid #e5e5e5;
-  border-radius: 14px;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.055);
-  transition: box-shadow 160ms ease, transform 160ms ease;
-}
-
-.rollout-card:hover {
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.075);
-  transform: translateY(-2px);
 }
 
 .rollout-video-frame {
@@ -511,13 +575,13 @@ body {
   }
 
   .main-results-table {
-    min-width: 1180px;
-    font-size: 0.78rem;
+    min-width: 720px;
+    font-size: 0.85rem;
   }
 
   .main-results-table th,
   .main-results-table td {
-    padding: 0.5rem 0.45rem;
+    padding: 0.4rem 0.28rem;
   }
 
   .result-curve-svg {
@@ -538,7 +602,7 @@ body {
 }
 
 .teaser {
-  font-family: 'Google Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 
@@ -562,11 +626,11 @@ body {
 }
 
 .publication-title {
-    font-family: 'Google Sans', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .publication-authors {
-    font-family: 'Google Sans', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .publication-venue {
@@ -585,7 +649,7 @@ body {
 }
 
 .publication-authors a {
-   color: hsl(204, 86%, 53%) !important;
+   color: rgb(20, 135, 200) !important;
 }
 
 .publication-authors a:hover {
@@ -643,7 +707,7 @@ body {
 
 
 .interpolation-panel {
-  background: #f5f5f5;
+  background: #f5f9fc;
   border-radius: 10px;
 }
 
