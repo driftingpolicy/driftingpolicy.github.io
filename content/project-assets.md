@@ -5,4 +5,4 @@ defined directly in `index.html` so the layout stays precise.
 
 ## teaser
 
-![](./static/images/Teaser.png)
+![](./static/images/teaser.png)
